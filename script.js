@@ -1,13 +1,36 @@
 const events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
+const containerHeight = 720;
+const minutesinDay = 60 * 12;
 
-const adjectives = ['Fun', 'Sad', 'Yummy', 'Atrocious', 'Hot', 'Boring', 'Exciting', 'Interesting']
-const location = "Sample Location";
+var createEvent = (height, top) => {
 
-var generateEventName = function () {
-  return `${ adjectives[Math.floor(Math.random())* (adjectives.length - 1)] } Event`
+  // Default CSS that's the same for all
+  let node = document.createElement("DIV");
+  node.class = "event";
+  node.style.backgroundColor = "pink";
+  node.style.borderStyle = "solid";
+  node.style.borderWidth = "1px";
+  node.style.borderColor = "grey"
+  node.innerHTML = 
+  "<span class='event-title'> Sample Item </span> \
+  <br><span class='event-location'> Sample Location </span>";
+  node.style.position = "absolute"
+
+  // Customized CSS
+  node.style.width = "50%";
+  node.style.top = height + "px";
+
+  document.getElementById("days").appendChild(node);
 }
 
-let layOutDay = function () {
-  console.log(events);
+var layOutDay = () => {
+  events.forEach((event) => {
+
+    let height = (event.end - event.start) / minutesinDay * containerHeight;
+    let top = event.start / minutesinDay * containerHeight
+
+    createEvent(height);
+
+  });
 }
 
