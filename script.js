@@ -70,27 +70,46 @@ horizontal position ==> pixel offset from left
 
   for (var i = 0; i < events.length; i++) {
     width.push(0);
+    leftOffSet.push(0);
   }
 
   collisions.forEach((period) => {
+
     // number of events in that period
     let count = period.reduce((a,b) => {
       return a + b;
     })
 
-    // for each event, get max number of events it is sharing a time period with
     if (count > 1) {
       period.forEach((event, id) => {
+        // for each event, get max number of events it is sharing a time period with
         if (period[id]) {
           if (count > width[id]) {
             width[id] = count;
           }
         }
+
+        // get max offset from left
+        if (event === 1) {
+          let count = 0
+          var index = id - 1;
+          while (index >= 0) {
+            if (period[index] === 1) {
+              count ++;
+            }
+            index --;
+          }
+          if (count > leftOffSet[id]) {
+            leftOffSet[id] = count;
+          }
+        }
       })
     }
-
   })
-  console.log(width, "width");
+  
+  console.log(width, 'width');
+  console.log(leftOffSet, 'leftOffSet');
+
 
 })();
 
@@ -103,11 +122,11 @@ var layOutDay = () => {
     let start = event.start;
     let units = width[id];
     if (!units) {units = 1};
-    console.log(units, id, 'yo');
-    //let left = containerWidth / leftOffSet[id];
+    let left = containerWidth / width[id] * leftOffSet[id];
+
     // go through collisions. 
     // Save the largest number of collisions found in event's time period and use that to determine width
-    createEvent(height, top, 0, units);
+    createEvent(height, top, left, units);
   });
 }
 
