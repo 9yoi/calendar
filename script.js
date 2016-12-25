@@ -16,7 +16,7 @@ var createEvent = (height, top, left, units) => {
   <br><span class='event-location'> Sample Location </span>";
 
   // Customized CSS to position each event
-  node.style.width = 100/units - 1 + "%";
+  node.style.width = (containerWidth/units) - 2 + "px";
   node.style.height = height + "px";
   node.style.top = top + "px";
   node.style.left = 100 + left + "px";
@@ -44,11 +44,13 @@ e.g.[[], [1], [1,2]] ==> nothing at 9am, event 1 at 9.30, event 1 and 2 at 10am
     let end = event.end;
     let start = event.start;
 
-    while (start <= end) {
+    while (start < end) {
       timeIndex = Math.floor(start/30);
       collisions[timeIndex][id] = 1;
       start = start + 30;
     }
+
+    collisions[Math.floor((end-1)/30)][id] = 1;
 
   });
   console.log(collisions);
@@ -82,13 +84,12 @@ horizontal position ==> pixel offset from left
 
     if (count > 1) {
       period.forEach((event, id) => {
-        // for each event, get max number of events it is sharing a time period with
+        // max number of events it is sharing a time period with determines width
         if (period[id]) {
           if (count > width[id]) {
             width[id] = count;
           }
         }
-
         // get max offset from left
         if (event === 1) {
           let count = 0
@@ -105,7 +106,7 @@ horizontal position ==> pixel offset from left
         }
       })
     }
-  })
+  });
   
   console.log(width, 'width');
   console.log(leftOffSet, 'leftOffSet');
@@ -122,7 +123,10 @@ var layOutDay = () => {
     let start = event.start;
     let units = width[id];
     if (!units) {units = 1};
-    let left = containerWidth / width[id] * leftOffSet[id];
+    console.log(containerWidth, id, width[id], leftOffSet[id])
+    let left = (containerWidth / width[id]) * leftOffSet[id] + 10;
+    if (!left) {left = 10};
+    console.log(id, left, 'id, left');
 
     // go through collisions. 
     // Save the largest number of collisions found in event's time period and use that to determine width
