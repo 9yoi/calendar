@@ -43,14 +43,24 @@ e.g.[[], [1], [1,2]] ==> nothing at 9am, event 1 at 9.30, event 1 and 2 at 10am
   events.forEach((event, id) => {
     let end = event.end;
     let start = event.start;
+    let order = 1;
 
     while (start < end) {
       timeIndex = Math.floor(start/30);
-      collisions[timeIndex][id] = 1;
+
+      while (order < events.length) {
+        if (collisions[timeIndex].indexOf(order) === -1) {
+          break;
+        }
+        order ++;
+      }
+
+      collisions[timeIndex][id] = order;
+
       start = start + 30;
     }
 
-    collisions[Math.floor((end-1)/30)][id] = 1;
+    collisions[Math.floor((end-1)/30)][id] = order;
 
   });
   console.log(collisions);
@@ -79,7 +89,7 @@ horizontal position ==> pixel offset from left
 
     // number of events in that period
     let count = period.reduce((a,b) => {
-      return a + b;
+      return b ? a + 1 : a;
     })
 
     if (count > 1) {
@@ -90,26 +100,25 @@ horizontal position ==> pixel offset from left
             width[id] = count;
           }
         }
-        // get max offset from left
-        if (event === 1) {
-          let count = 0
-          var index = id - 1;
-          while (index >= 0) {
-            if (period[index] === 1) {
-              count ++;
-            }
-            index --;
-          }
-          if (count > leftOffSet[id]) {
-            leftOffSet[id] = count;
-          }
+
+        if (period[id] && !leftOffSet[id]) {
+          leftOffSet[id] = period[id];
         }
+
+        console.log(leftOffSet);
       })
     }
+
   });
   
   console.log(width, 'width');
   console.log(leftOffSet, 'leftOffSet');
+
+  // for each event, pick a position for that range. 
+  // pick 1 by default if 1 is empty.
+  events.forEach((event) => {
+
+  });
 
 
 })();
@@ -124,8 +133,8 @@ var layOutDay = () => {
     let units = width[id];
     if (!units) {units = 1};
     console.log(containerWidth, id, width[id], leftOffSet[id])
-    let left = (containerWidth / width[id]) * leftOffSet[id] + 10;
-    if (!left) {left = 10};
+    let left = (containerWidth / width[id]) * (leftOffSet[id] - 1) + 10;
+    if (!left || left < 0) {left = 10};
     console.log(id, left, 'id, left');
 
     // go through collisions. 

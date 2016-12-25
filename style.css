@@ -38,6 +38,14 @@ time, audio {
   flex-direction: column;
   justify-content: space-between;
   background-color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7em;
+  color: #d3d3d3;
+}
+
+.bold {
+  font-size: 1em
+  color: #696969
 }
 
 .days {
