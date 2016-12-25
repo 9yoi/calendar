@@ -24,31 +24,33 @@ time, audio {
 }
 
 .container {
-  margin: 0px auto 0 auto
   width: 720px;
   height: 720px;
-  display: block;
 }
 
 .timings {
   float: left;
-  width: 100px;
+  text-align: right;
+  padding-right: 10px;
+  width: 90px;
   height: 720px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: white;
 }
 
 .days {
-  background-color: lightgrey;
   width: 600px;
   height: 720px;
   padding: 0px 10px;
+  background-color: lightgrey;
 }
 
 .event {
-  width: 200px;
-  height: 200px;
   background-color: pink;
-
+  border-style: solid;
+  border-width: 1px;
+  border-color: grey;
+  position: absolute;
 }
