@@ -28,8 +28,9 @@ var createEvent = (height, top, left, units) => {
 collisions is an array that tells you which events are in each 30 min slot
 - each first level of array corresponds to a 30 minute slot on the calendar 
   - [[0 - 30mins], [ 30 - 60mins], ...]
-- next level of array tells you which event is present in that slot and the horizontal order
-  - [[0,0,0,0], [0,0,1,2] ==> nothing at 9am, event 3 at order 1, event 4 at order 2
+- next level of array tells you which event is present and the horizontal order
+  - [0,0,1,2] 
+  ==> event 1 is not present, event 2 is not present, event 3 is at order 1, event 4 is at order 2
 */
 
 (function getCollisions () {
@@ -58,27 +59,19 @@ collisions is an array that tells you which events are in each 30 min slot
       }
 
       collisions[timeIndex][id] = order;
-
       start = start + 30;
     }
 
     collisions[Math.floor((end-1)/30)][id] = order;
-
   });
-  console.log(collisions);
-
 })();
 
 /*
 find width and horizontal position
 
-width 
-- number of units to divide container width by
-- for each period, set width to element/ length of array
-- update as long as new width is smaller
+width - number of units to divide container width by
+horizontal position - pixel offset from left
 
-horizontal position ==> pixel offset from left
-- relates to index in array
 */
 (function getAttributes () {
 
@@ -106,27 +99,12 @@ horizontal position ==> pixel offset from left
         if (period[id] && !leftOffSet[id]) {
           leftOffSet[id] = period[id];
         }
-
-        console.log(leftOffSet);
       })
     }
-
   });
-  
-  console.log(width, 'width');
-  console.log(leftOffSet, 'leftOffSet');
-
-  // for each event, pick a position for that range. 
-  // pick 1 by default if 1 is empty.
-  events.forEach((event) => {
-
-  });
-
-
 })();
 
 var layOutDay = () => {
-
   events.forEach((event, id) => {
     let height = (event.end - event.start) / minutesinDay * containerHeight;
     let top = event.start / minutesinDay * containerHeight; 
@@ -134,13 +112,8 @@ var layOutDay = () => {
     let start = event.start;
     let units = width[id];
     if (!units) {units = 1};
-    console.log(containerWidth, id, width[id], leftOffSet[id])
     let left = (containerWidth / width[id]) * (leftOffSet[id] - 1) + 10;
     if (!left || left < 0) {left = 10};
-    console.log(id, left, 'id, left');
-
-    // go through collisions. 
-    // Save the largest number of collisions found in event's time period and use that to determine width
     createEvent(height, top, left, units);
   });
 }
