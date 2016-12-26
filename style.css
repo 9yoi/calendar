@@ -21,43 +21,59 @@ time, audio {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+  font-family: 'Montserrat', sans-serif;
+  color: #D1D1D1;
 }
 
 .container {
-  width: 720px;
-  height: 720px;
+  height:720px;
+  width: 900px;
+  display: inline-flex;
 }
 
 .timings {
-  float: left;
   text-align: right;
   padding-right: 10px;
-  width: 90px;
+  width: 100px;
   height: 720px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background-color: white;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.7em;
-  color: #d3d3d3;
+  font-size: 0.5em;
+  box-sizing: border-box
 }
 
-.bold {
-  font-size: 1em
-  color: #696969
+.timings span {
+  font-size: 200%;
+  color: #696969;
 }
 
 .days {
   height: 720px;
+  width: 620px;
   padding: 0px 10px;
-  background-color: lightgrey;
+  background-color: #F0F0F0;
+  border-color: #D1D1D1;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
 }
 
 .event {
-  background-color: pink;
+  background-color: white;
   border-style: solid;
   border-width: 1px;
-  border-color: grey;
+  border-left-width: 5px;
+  border-color: #D1D1D1;
+  border-left-color: #57b986;
+  padding-left: 10px;
   position: absolute;
+  font-size: 0.5em;
+  box-sizing: border-box;
+}
+
+.event .title {
+  color: #57b986;
+  font-size: 200%;
 }

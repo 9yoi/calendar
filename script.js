@@ -6,17 +6,17 @@ let collisions = [];
 let width = [];
 let leftOffSet = [];
 
+// append one event to calendar
 var createEvent = (height, top, left, units) => {
 
-  // Default CSS that's the same for all
   let node = document.createElement("DIV");
   node.className = "event";
   node.innerHTML = 
-  "<span class='event-title'> Sample Item </span> \
-  <br><span class='event-location'> Sample Location </span>";
+  "<span class='title'> Sample Item </span> \
+  <br><span class='location'> Sample Location </span>";
 
   // Customized CSS to position each event
-  node.style.width = (containerWidth/units) - 2 + "px";
+  node.style.width = (containerWidth/units) + "px";
   node.style.height = height + "px";
   node.style.top = top + "px";
   node.style.left = 100 + left + "px";
@@ -26,8 +26,10 @@ var createEvent = (height, top, left, units) => {
 
 /* 
 collisions is an array that tells you which events are in each 30 min slot
-each index of array corresponds to 30 minutes on the calendar
-e.g.[[], [1], [1,2]] ==> nothing at 9am, event 1 at 9.30, event 1 and 2 at 10am
+- each first level of array corresponds to a 30 minute slot on the calendar 
+  - [[0 - 30mins], [ 30 - 60mins], ...]
+- next level of array tells you which event is present in that slot and the horizontal order
+  - [[0,0,0,0], [0,0,1,2] ==> nothing at 9am, event 3 at order 1, event 4 at order 2
 */
 
 (function getCollisions () {
