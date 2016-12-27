@@ -68,6 +68,7 @@ time, audio {
   border-color: #D1D1D1;
   border-left-color: #57b986;
   padding-left: 10px;
+  padding-top: 5px;
   position: absolute;
   font-size: 0.5em;
   box-sizing: border-box;

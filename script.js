@@ -1,4 +1,3 @@
-const events = [ {start: 10, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 const containerHeight = 720;
 const containerWidth = 600;
 const minutesinDay = 60 * 12;
@@ -33,7 +32,7 @@ collisions is an array that tells you which events are in each 30 min slot
   ==> event 1 is not present, event 2 is not present, event 3 is at order 1, event 4 is at order 2
 */
 
-function getCollisions () {
+function getCollisions (events) {
 
   //resets storage
   collisions = [];
@@ -74,9 +73,8 @@ find width and horizontal position
 
 width - number of units to divide container width by
 horizontal position - pixel offset from left
-
 */
-function getAttributes () {
+function getAttributes (events) {
 
   //resets storage
   width = [];
@@ -111,10 +109,14 @@ function getAttributes () {
   });
 };
 
-var layOutDay = () => {
+var layOutDay = (events) => {
 
-  getCollisions();
-  getAttributes();
+// clear any existing nodes
+var myNode = document.getElementById("events");
+myNode.innerHTML = '';
+
+  getCollisions(events);
+  getAttributes(events);
 
   events.forEach((event, id) => {
     let height = (event.end - event.start) / minutesinDay * containerHeight;
