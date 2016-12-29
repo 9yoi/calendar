@@ -1,6 +1,6 @@
 // init global variables
 
-//const events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
+const events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 // const events = 
 // [ { start: 215, end: 378 },
 //   { start: 600, end: 687 },
@@ -12,6 +12,7 @@ const containerHeight = 720;
 const containerWidth = 600;
 const minutesinDay = 60 * 12;
 const colSize = 10;
+//const events = null;
 
 let widths = [];
 let offset = [];
@@ -34,6 +35,16 @@ var createEvent = (height, top, left, width) => {
   node.style.left = 100 + 10 + left + "px";
 
   document.getElementById("events").appendChild(node);
+}
+
+// sort events by longest time period first. 
+// this is used to slot events more effectively into the DOM later
+var sortEvents = (events) => {
+  events = events.sort((a, b) => {
+   return (b.end - b.start) - (a.end - a.start);
+  });
+  console.log (events, 'sorted');
+  return events;
 }
 
 /* helper function to find collisions
@@ -117,6 +128,7 @@ var addToCol = (eventId, start) => {
 // always slot item into column one. 
 // if there is already something there, move to next column
 var findOffset = (events) => {
+
   //reset
   columns = [];
   //first event
@@ -160,6 +172,33 @@ var findOffset = (events) => {
   return offset;
 }
 
+// expand element to fit a given space
+var expand = (events) => {
+  events.forEach((event, id) => {
+    for (var i = 0; i < columns.length - 1; i++) {
+      // if event is present in current column and not in the next column
+      // check if possible to add into next column (no collision)
+      if (columns[i][id] && !columns[i+1][id]) {
+
+        let colCollision = true;
+
+        columns[i+1].forEach((period) => {
+          console.log(event, events[period])
+          if (!checkCollisions(event, events[period])) {
+            colCollision = false;
+          }
+        });
+
+        if (!colCollision) {
+         // console.log(id, i, columns);
+          columns[i+1].push(id);
+          widths[id] = widths[id] + colSize;
+        }
+      }
+    }
+  })
+}
+
 var layOutDay = (events) => {
 
   // clear any existing nodes
@@ -167,8 +206,10 @@ var layOutDay = (events) => {
   myNode.innerHTML = '';
 
   console.log(JSON.stringify(events), 'events received');
+  sortEvents(events);
   getWidth(events);
   findOffset(events);
+  expand(events);
 
   events.forEach((event, id) => {
     let height = (event.end - event.start) / minutesinDay * containerHeight;
@@ -180,3 +221,5 @@ var layOutDay = (events) => {
     createEvent(height, top, left, width);
   });
 }
+
+layOutDay(events);
