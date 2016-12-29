@@ -1,6 +1,6 @@
 // init global variables
 
-const events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
+//const events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 // const events = 
 // [ { start: 215, end: 378 },
 //   { start: 600, end: 687 },
@@ -11,9 +11,12 @@ const events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end
 const containerHeight = 720;
 const containerWidth = 600;
 const minutesinDay = 60 * 12;
+const colSize = 10;
+
 let widths = [];
-let columns = 1;
 let offset = [];
+let columns = [];
+
 
 // helper function to append one event to DOM
 var createEvent = (height, top, left, width) => {
@@ -72,7 +75,8 @@ Initial width is container size / max number of conflicts
 
 
 var getWidth = events => {
-
+  //reset
+  widths = [];
   let collisions = [];
   // check each event against every other event
   events.forEach((event, id1) => {   
@@ -85,65 +89,84 @@ var getWidth = events => {
     })
   })
 
-  // get each container width and columns needed to fit all events
+  // get each container width and maxColumns needed to fit all events
   collisions.forEach((event) => {
     widths.push(containerWidth / event.length)
-    if (event.length > columns) {
-      columns = event.length;
-    }
   })
-
+  console.log(collisions, 'collisions');
+  console.log(widths, 'widths');
   return widths;
 } 
 
-// always slot item into column one. 
-// if there is already something there, + width of the last item in conflict with
-var findOffset = (events) => {
+// helper function to add item to columns in findOffset
+// event would be added to all columns according to width
+// e.g. if each slot is 200px, a 400px event has to be added to 2 columns
 
-  let slotted = [];
+var addToCol = (eventId, start) => {
+  let unitWidth = colSize;
+  let remainingWidth = widths[eventId];
+  let col = start;
+  while (remainingWidth) {
+    columns[col] ? columns[col].push(eventId) : columns[col] = [eventId];
+    remainingWidth = remainingWidth - unitWidth;
+    col ++;
+  }
+  return columns;
+};
+
+// always slot item into column one. 
+// if there is already something there, move to next column
+var findOffset = (events) => {
+  //reset
+  columns = [];
+  //first event
+  if (columns.length === 0) {
+    addToCol(0, 0);
+    offset[0] = 0;
+    while (columns.length < 60) {
+      columns.push([]);
+    }
+  }
 
   events.forEach((event, id) => {
-    //first event
-    if (slotted.length === 0) {
-      slotted.push([event]);
-    }
-
-    // check event against whatever has been added to slotted
-    for (var i = 0; i < slotted.length; i++) {
-      let column = slotted[i];
+    // remaining events
+    if (id > 0) {
       let conflict = false;
-      // if collision within a slot, move to next slot by jumping out of inner loop
-      for (var j = 0; j < column.length; j++) {
-        let period = column[j];
-        if(checkCollisions(event, period)) {
-          conflict = !conflict;
+      // check event against whatever has been added to columns
+      for (var i = 0; i < columns.length; i++) {
+        conflict = false;
+        // if collision within a column, move to next column by jumping out of inner loop
+        for (var j = 0; j < columns[i].length; j++) {
+          let period = columns[i][j];
+          //!!!!!!!! reeval how to check collisions
+          if(checkCollisions(event, events[period])) {
+            conflict = !conflict;
+            break;
+          }
+        }
+
+        // if no collision for that column, add event and terminate
+        if (!conflict) {
+          //console.log(columns, id, i, 'no conflict new columns')
+          offset[id] = i * colSize;
+          addToCol(id, i);
           break;
         }
       }
-
-      // if no collision for that slot, add event and terminate
-      // event should be added for all columns according to width
-      // e.g. if each column is 200px, a 400px event has to be added to 2 columns
-      if (!conflict) {
-        let width = widths[id];
-        let column = i;
-        offset[id] = containerWidth/columns * (i);
-        while (width) {
-          slotted[column] ? slotted[column].push(event) : slotted[column] = [event];
-          width = width - containerWidth/columns;
-          column ++; 
-        }
-        break;
-      }
     }
-  });
 
-  return slotted;
-    
+  });
+  console.log(offset, 'offset');
+  return offset;
 }
 
 var layOutDay = (events) => {
 
+  // clear any existing nodes
+  var myNode = document.getElementById("events");
+  myNode.innerHTML = '';
+
+  console.log(JSON.stringify(events), 'events received');
   getWidth(events);
   findOffset(events);
 
@@ -154,9 +177,6 @@ var layOutDay = (events) => {
     let start = event.start;
     let width = widths[id];
     let left = offset[id];
-    console.log(event, height, top, left, width);
     createEvent(height, top, left, width);
   });
 }
-
-layOutDay(events);

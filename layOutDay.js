@@ -2,7 +2,7 @@
 //const events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 //const events = [ {start: 30, end: 150}, {start: 50, end: 600}, {start: 30, end: 620}, {start: 200, end: 670}, {start: 200, end: 670}, {start: 500, end: 600}];
 
-layOutDay(events);
+//layOutDay(events);
 
 //function to generate mock events for testing
 function generateMockEvents (n) {
